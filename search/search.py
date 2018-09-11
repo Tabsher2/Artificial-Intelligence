@@ -86,18 +86,107 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    # Create a stack for the moves and push the starting spot on
+    moves = util.Stack()
+    moves.push((problem.getStartState(), []))
+
+    # Create a set for the nodes we've expanded
+    expanded = set()
+    
+    # While we still have possible moves
+    while not (moves.isEmpty()):
+        # Get the best one
+        state, actions = moves.pop()
+
+        # If we've already been here, skip it
+        if state in expanded:
+            continue
+
+        # If we haven't, add it
+        else:
+            expanded.add(state)
+
+        # If we've reached the goal, return how we got here
+        if (problem.isGoalState(state)):
+            return actions
+
+        # For all of our neighbors and the actions to get there
+        # Ordered by lowest cost
+        # If we haven't visited it, add it to our stack
+        # Stack will pop off the highest cost first
+        for neighbor, action, cost in problem.getSuccessors(state):
+            if neighbor not in expanded:
+                moves.push((neighbor, actions + [action]))
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Create a queue for the moves and push the starting spot on
+    moves = util.Queue()
+    moves.push((problem.getStartState(), []))
+
+    # Create a set for the nodes we've expanded
+    expanded = set()
+
+    # While we still have possible moves
+    while not (moves.isEmpty()):
+        # Get the best one
+        state, actions = moves.pop()
+
+        # If we've already been here, skip it
+        if state in expanded:
+            continue
+
+        # If we haven't, add it 
+        else:
+            expanded.add(state)
+
+        # If we've reached the goal, return how we got here
+        if (problem.isGoalState(state)):
+            return actions
+
+        # For all of our neighbors and the actions to get there
+        # Ordered by lowest cost
+        # If we haven't visited it, add it to our queue
+        # Queue will pop off the nearest neighbor first
+        for neighbor, action, cost in problem.getSuccessors(state):
+            if neighbor not in expanded:
+                moves.push((neighbor, actions + [action]))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Create a queue for the moves and push the starting spot on
+    moves = util.PriorityQueue()
+    moves.push((problem.getStartState(), []), 0)
+
+    # Create a set for the nodes we've expanded
+    expanded = set()
+
+    # While we still have possible moves
+    while not (moves.isEmpty()):
+        # Get the best one
+        state, actions = moves.pop()
+        currentCost = problem.getCostOfActions(actions)
+
+        # If we've already been here, skip it
+        if state in expanded:
+            continue
+
+        # If we haven't, add it 
+        else:
+            expanded.add(state)
+
+        # If we've reached the goal, return how we got here
+        if (problem.isGoalState(state)):
+            return actions
+
+        # For all of our neighbors and the actions to get there
+        # Ordered by lowest cost
+        # If we haven't visited it, add it to our priority queue
+        # Queue will pop off the lowest cost first
+        for neighbor, action, cost in problem.getSuccessors(state):
+            if neighbor not in expanded:
+                moves.push((neighbor, actions + [action]), cost + currentCost)
 
 def nullHeuristic(state, problem=None):
     """
@@ -108,8 +197,40 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Create a queue for the moves and push the starting spot on
+    moves = util.PriorityQueue()
+    moves.push((problem.getStartState(), []), 0)
+
+    # Create a set for the nodes we've expanded
+    expanded = set()
+
+    # While we still have possible moves
+    while not (moves.isEmpty()):
+        # Get the best one
+        state, actions = moves.pop()
+        currentCost = problem.getCostOfActions(actions)
+
+        # If we've already been here, skip it
+        if state in expanded:
+            continue
+
+        # If we haven't, add it 
+        else:
+            expanded.add(state)
+
+        # If we've reached the goal, return how we got here
+        if (problem.isGoalState(state)):
+            return actions
+
+        # For all of our neighbors and the actions to get there
+        # Ordered by lowest cost
+        # If we haven't visited it, add it to our priority queue
+        # Queue will pop off the lowest cost first
+        # Cost is determined by distance and the value of the heuristic
+        for neighbor, action, cost in problem.getSuccessors(state):
+            if neighbor not in expanded:
+                moves.push((neighbor, actions + [action]), cost + currentCost
+                           + heuristic(neighbor, problem))
 
 
 # Abbreviations
