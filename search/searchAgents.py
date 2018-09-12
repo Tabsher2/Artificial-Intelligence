@@ -369,15 +369,19 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
+    # If there are no more corners, return 0
+    if len(state[1]) == 0:
+        return 0
+    
     p1 = state[0]
-    p2 = problem.corners[0]
     distance = 0
-    minDistance = 1000000
-    for i in problem.corners:
-        distance = (abs(p1[0] - i[0]) + abs(p1[1] - i[1]))
-        if (distance < minDistance):
-            minDistance = distance
-    return distance # Default to trivial solution
+    maxDistance = 0
+    # Find the corner that has the furthest manhattan distance from us
+    for i in state[1]:
+        distance = util.manhattanDistance(p1,i)
+        if (distance >= maxDistance):
+            maxDistance = distance
+    return maxDistance # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
