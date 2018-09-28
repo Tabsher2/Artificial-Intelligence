@@ -1,0 +1,43 @@
+commit 17ff883dab994b0a151cd6b36bf6c05d05a083cd
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Thu Sep 13 17:28:51 2018 -0400
+
+    Solved Problems 7 and 8
+
+commit 7efb920bb6449d3779b116cf2988389ec6bdc6a4
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Tue Sep 11 22:33:38 2018 -0400
+
+    Solution for Problem 6
+    
+    Came up with a heuristic for problem 6 using manhattan distance
+
+commit b89913e931050595a3b685411b2443ac272ab582
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Tue Sep 11 17:45:53 2018 -0400
+
+    Solved Problem 5
+    
+    Solved Problem 5 and began work on a heuristic for Problem 6
+
+commit c77a1ccbe36522991a2bbcc9f754c8c1f8ab3410
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Mon Sep 10 22:06:38 2018 -0400
+
+    Solved Problems 1 - 4
+    
+    Solved DFS, BFS, UCS, and AStar
+
+commit 7ac10fa5f126f3f767f9a986228481405fe3e8e7
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Mon Sep 10 16:31:46 2018 -0400
+
+    Initial Commit
+    
+    First commit for Assignment 1
+
+commit 2585e3d63030480b2ccf92bb54e4e84fb4bd63ec
+Author: Tabsher2 <absher.trevor@gmail.com>
+Date:   Mon Sep 10 16:04:41 2018 -0400
+
+    Initial commit
