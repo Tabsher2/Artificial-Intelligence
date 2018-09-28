@@ -72,9 +72,44 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
+        extraScore = 0
+        tempScore = 0
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        if successorGameState.isWin():
+            return 100000
+        
+        for ghostState in newGhostStates:
+            distance = manhattanDistance(ghostState.getPosition(), newPos)
+            # If the ghost is far away we won't try and eat it, but we really want to if its close
+            if ghostState.scaredTimer != 0 and distance < ghostState.scaredTimer:
+                tempScore += (100 * 2**(1/distance))
+            if ghostState.scaredTimer == 0 and distance < 2:
+                tempScore-= 1000
+                
+        extraScore += tempScore
+        # Reward eating power-up pellets if a ghost is nearby
+        if ((newPos in currentGameState.getCapsules()) and (distance < 20)):
+            extraScore += 100
+
+        minDistance = float("inf")
+        foodList = newFood.asList()
+        for food in foodList:
+            distance = manhattanDistance(food, newPos)
+            if (distance < minDistance):
+                minDistance = distance
+
+        # We lose points for having food nearby that we could eat
+        extraScore -= 5 * minDistance
+        # There's almost no scenario we want to not be moving
+        if action == "Stop":
+            extraScore -= 100
+        # Reward eating food
+        oldFood = currentGameState.getFood()
+        oldFoodList = oldFood.asList()
+        if len(oldFoodList) > len(foodList):
+            extraScore += 100
+            
+        return extraScore + successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
     """
