@@ -163,9 +163,51 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Return the best move we can make at each state based on what the ghosts are doing
+        bestScore,bestMove = self.maxMove(gameState,self.depth)
 
+        return bestMove
+
+    # Maximum function
+    def maxMove(self,state,depth):
+        # Instantly return score if this is a goal state
+        if (depth == 0 or state.isWin() or state.isLose()):
+            return self.evaluationFunction(state), "none"
+
+        # Get all of our possible actions based off the ghost's actions and pick the largest value
+        actions = state.getLegalActions()
+        scores = [self.minMove(state.generateSuccessor(self.index,action),depth,1) for action in actions]
+        bestScore = max(scores)
+        # Choose the move that gives us this score
+        optimalInds = [index for index in range(len(scores)) if scores[index] == bestScore]
+        index = optimalInds[0]
+                
+        return bestScore, actions[index]
+
+    # Minimum function
+    def minMove(self,state, depth, agentIndex):
+        numGhosts = state.getNumAgents() - 1
+
+        # Instantly return score if this is a goal state
+        if (depth == 0 or state.isWin() or state.isLose()):
+            return self.evaluationFunction(state), "none"
+
+        actions = state.getLegalActions(agentIndex)
+        # Add a min layer for each ghost for every max layer
+        if (agentIndex == numGhosts):
+            scores = [self.maxMove(state.generateSuccessor(agentIndex,action),(depth-1))[0] for action in actions]
+        
+        else:
+            scores = [self.minMove(state.generateSuccessor(agentIndex,action),depth,agentIndex+1) for action in actions]
+
+        # Find the smallest score we can be forced to receive and the move that gives us that score
+        worstScore = min(scores)
+        optimalInds = [index for index in range(len(scores)) if scores[index] == worstScore]
+        index = optimalInds[0]
+        return worstScore, actions[index]
+
+        
+    
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
