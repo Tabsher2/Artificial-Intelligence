@@ -163,50 +163,54 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        # Return the best move we can make at each state based on what the ghosts are doing
-        bestScore,bestMove = self.maxMove(gameState,self.depth)
+        bestScore = -float("inf")
+        bestAction = Directions.STOP
 
-        return bestMove
+        # For all the moves we can make, find the maximum move out of the
+        # minimum options forced upon us
+        for action in gameState.getLegalActions(0):
+            score = bestScore
+            newState = gameState.generateSuccessor(0, action)
+            bestScore = max(bestScore, self.minValue(newState, 1, 1))
 
-    # Maximum function
-    def maxMove(self,state,depth):
-        # Instantly return score if this is a goal state
-        if (depth == 0 or state.isWin() or state.isLose()):
-            return self.evaluationFunction(state), "none"
+            if (bestScore > score):
+                bestAction = action
 
-        # Get all of our possible actions based off the ghost's actions and pick the largest value
-        actions = state.getLegalActions()
-        scores = [self.minMove(state.generateSuccessor(self.index,action),depth,1) for action in actions]
-        bestScore = max(scores)
-        # Choose the move that gives us this score
-        optimalInds = [index for index in range(len(scores)) if scores[index] == bestScore]
-        index = optimalInds[0]
-                
-        return bestScore, actions[index]
+        return bestAction
 
-    # Minimum function
-    def minMove(self,state, depth, agentIndex):
-        numGhosts = state.getNumAgents() - 1
+    # Minimum Function
+    def minValue(self,state, agentIndex, depth):
+        # The ghosts will maximize their movements against us
+        if agentIndex == state.getNumAgents():
+            return self.maxValue(state, 0, depth + 1)
+        score = float("inf")
+        # Create a min layer for each ghost per max layer
+        for action in state.getLegalActions(agentIndex):
+            newState = state.generateSuccessor(agentIndex, action)
+            score = min(score, self.minValue(newState, agentIndex + 1, depth))
 
-        # Instantly return score if this is a goal state
-        if (depth == 0 or state.isWin() or state.isLose()):
-            return self.evaluationFunction(state), "none"
-
-        actions = state.getLegalActions(agentIndex)
-        # Add a min layer for each ghost for every max layer
-        if (agentIndex == numGhosts):
-            scores = [self.maxMove(state.generateSuccessor(agentIndex,action),(depth-1))[0] for action in actions]
-        
+        # If we have no options, just return the regular score
+        if score != float("inf"):
+            return score
         else:
-            scores = [self.minMove(state.generateSuccessor(agentIndex,action),depth,agentIndex+1) for action in actions]
+            return self.evaluationFunction(state)
 
-        # Find the smallest score we can be forced to receive and the move that gives us that score
-        worstScore = min(scores)
-        optimalInds = [index for index in range(len(scores)) if scores[index] == worstScore]
-        index = optimalInds[0]
-        return worstScore, actions[index]
+    # Maximum Function
+    def maxValue(self,state, agentIndex, depth):
+        # If we have already explored all the depths, return the score
+        if depth > self.depth:
+            return self.evaluationFunction(state)
+        score = -float("inf")
+        # Get the maximum value of all the minimum options
+        for action in state.getLegalActions(agentIndex):
+            newState = state.generateSuccessor(agentIndex, action)
+            score = max(score, self.minValue(newState, agentIndex + 1, depth))
 
-        
+        # If we have no options, just return the regular score
+        if score != -float("inf"):
+            return score
+        else:
+            return self.evaluationFunction(state)
     
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -217,8 +221,60 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Same as Minimax but add in the pseudo code provided for Alpha-Beta Pruning
+        bestScore = -float("inf")
+        a = -float("inf")
+        b = float("inf")
+        bestAction = Directions.STOP
+
+        for action in gameState.getLegalActions(0):
+            newState = gameState.generateSuccessor(0, action)
+            bestScore = max(bestScore, self.minValue(newState, 1, 1, a,b))
+
+            # If our score is greater than our best option, that is our best move
+            if (bestScore > a):
+                bestAction = action
+            # Update our best option
+            a = max(bestScore, a)
+        return bestAction
+
+    # Minimum Function with pruning
+    def minValue(self,state, agentIndex, depth, a, b):
+        if agentIndex == state.getNumAgents():
+            return self.maxValue(state, 0, depth + 1, a, b)
+        score = float("inf")
+        for action in state.getLegalActions(agentIndex):
+            newState = state.generateSuccessor(agentIndex, action)
+            score = min(score, self.minValue(newState, agentIndex + 1, depth, a, b))
+
+            # Implement pseudo-code for Alpha-Beta Pruning
+            if score < a:
+                return score
+            b = min(b, score)
+        # If we have no options, just return the regular score
+        if score != float("inf"):
+            return score
+        else:
+            return self.evaluationFunction(state)
+
+
+    def maxValue(self,state, agentIndex, depth, a, b):
+        if depth > self.depth:
+            return self.evaluationFunction(state)
+        score = -float("inf")
+        for action in state.getLegalActions(agentIndex):
+            newState = state.generateSuccessor(agentIndex, action)
+            score = max(score, self.minValue(newState, agentIndex + 1, depth, a, b))
+
+            # Implement pseudo-code for Alpha-Beta Pruning 
+            if score > b:
+                return score
+            a = max(a, score)
+        # If we have no options, just return the regular score
+        if score != -float("inf"):
+            return score
+        else:
+            return self.evaluationFunction(state)
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
