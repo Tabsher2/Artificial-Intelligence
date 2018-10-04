@@ -321,10 +321,68 @@ def betterEvaluationFunction(currentGameState):
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
       evaluation function (question 5).
 
-      DESCRIPTION: <write something here so we know what you did>
+      DESCRIPTION: The important features I decided on were ghost positions,
+      food positions, amount of food, capsules with respect to ghost, and the
+      game given score
+
+      Ghost Positions: Punish being close to a ghost, thats dangerous
+      Food Positions: Punish having nearby food to incentivize Pacman to eat it
+      Amount of Food: Punish based on amount of food, the more food pacman eats
+      the higher score he'll get
+      Capsules: Punish Pacman if ghosts are nearby and so are capsules so he'll
+      want to get the capsules. Then reward pacman for moving closer to scared
+      ghosts with more points the closer he gets. Punish pacman for moving
+      closer to scared ghosts that he won't make it to in time.
+      Score: The game has a good given scoring method so we take it into account
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    score = 0
+    pos = currentGameState.getPacmanPosition()
+    ghosts = currentGameState.getGhostPositions()
+    ghostStates = currentGameState.getGhostStates()
+    foodList = currentGameState.getFood().asList()
+    minDistance = float("inf")
+   
+    # Reward a state with a good score
+    score -= 10*currentGameState.getScore()
+        
+    # If we are close to a ghost we want to get away from it
+    # Give this a very bad score because this is the most important thing
+    for ghost, ghostState in zip(ghosts, ghostStates):
+        distance = util.manhattanDistance(ghost,pos)
+        if (distance < 2):
+            score += 10000000
+        # If there are nearby ghosts, we should punish having existing
+        # Power-Up Pellets since we could eat those ghosts for a lot of points
+        if (distance < 20):
+            score += 100*len(currentGameState.getCapsules())
+        # If we can get to the ghost before the scared timer runs out, we
+        # should reward the ghost for moving towards it, getting more points
+        # the closer we get
+        if (ghostState.scaredTimer > distance):
+            score -= 100 * (2**(1/distance))
+        # If we can't, punish pacman for moving closer to the ghost
+        else:
+            score += 100
+
+    minDistance = float("inf")
+    distance = 0
+    # Evaluate distance for food and take away score for being far from it
+    for food in foodList:
+        distance = util.manhattanDistance(food, pos)
+        if (distance <= minDistance):
+            minDistance = distance
+
+    # We lose points for having food nearby that we could eat
+    if (len(foodList) != 0):
+        score += minDistance
+
+    # Punish having food left
+    # Punish this heavily since getting all the food is very important
+    # (Not as heavily as avoiding ghosts though)
+    score += 1000*currentGameState.getNumFood()
+    
+    # Use the inverse of the score
+    return -(score) 
 
 # Abbreviation
 better = betterEvaluationFunction
