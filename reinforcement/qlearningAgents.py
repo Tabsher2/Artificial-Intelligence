@@ -69,11 +69,11 @@ class QLearningAgent(ReinforcementAgent):
         if (len(legalActions) == 0):
             return 0
 
-        bestVal = None
+        bestVal = -float("inf")
         for action in legalActions:
             qVal = self.getQValue(state, action)
             # Even if all Q-Values are negative we still have to choose one
-            if (bestVal is None or bestVal < qVal):
+            if (bestVal < qVal):
                 bestVal = qVal
                 
         return bestVal
@@ -91,11 +91,11 @@ class QLearningAgent(ReinforcementAgent):
             return None
 
         bestAction = None
-        bestVal = None
+        bestVal = -float("inf")
         for action in legalActions:
             qVal = self.getQValue(state, action)
             # Even if all Q-Values are negative we still have to choose one
-            if (bestVal is None or bestVal < qVal):
+            if (bestVal < qVal):
                 bestVal = qVal
                 bestAction = action
 
