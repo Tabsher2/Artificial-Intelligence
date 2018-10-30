@@ -122,6 +122,7 @@ class QLearningAgent(ReinforcementAgent):
             return None
 
         # Take random action with probability self.epsilon
+        # This covers the solution for problems 4 and 5
         if (util.flipCoin(prob)):
             action = random.choice(legalActions)
         # Otherwise take the best policy action
