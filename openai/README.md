@@ -11,3 +11,6 @@ score of -173.
 I then switched it to be based off pole angle instead of cart position but it still was not quite right. Finally, I decided to test out constantly switching back and forth between directions until there was
 a problem. This seemed to have much better results. I would switch actions every iteration until the pole angle got unbalanced. Whatever action made the pole go out of balance, I would do the opposite action
 until the pole was back in balance, then I would switch back to alternating between actions.
+
+**Problem 3** To solve problem 3, I pulled a lot of data from the cart pole cross entropy solution. I used a modified reward as opposed to original as it appeared to have better results. Typically it took around
+300 episodes to get a good policy that would reach the goal, with an optimal policy being learned around 500 episodes.
