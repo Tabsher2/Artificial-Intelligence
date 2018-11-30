@@ -6,3 +6,8 @@ README
 The car then goes up the left hill, until it starts to slip down again, when I then switch and tell it to go right. This goes back and forth until the cart has enough velocity to reach the goal. In my tests,
 it only took 3 total switches, two sets of moving right, and one of moving left, receiving a consistent score of -122. I initially tried moving left first instead of right but this took longer and only got a
 score of -173.
+
+**Problem 2** For problem 2, my first attempt involved moving the cart based on its position. If it got too far to the left, move to the right, and vice versa. After a few attempts, this didn't seem to work.
+I then switched it to be based off pole angle instead of cart position but it still was not quite right. Finally, I decided to test out constantly switching back and forth between directions until there was
+a problem. This seemed to have much better results. I would switch actions every iteration until the pole angle got unbalanced. Whatever action made the pole go out of balance, I would do the opposite action
+until the pole was back in balance, then I would switch back to alternating between actions.
